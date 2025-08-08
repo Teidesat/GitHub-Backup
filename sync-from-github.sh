@@ -141,7 +141,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check if git is installed
-if ! command -v git &> /dev/null; then
+if ! command -v git > /dev/null; then
     echo "Error: git is not installed. Please install and configure it to use this script."
     exit 1
 fi
@@ -157,7 +157,7 @@ elif ! $QUIET; then
 fi
 
 # Check if jq is installed
-if ! command -v jq &> /dev/null; then
+if ! command -v jq > /dev/null; then
     echo "Error: jq is not installed. Please install it to use this script."
     exit 1
 fi
@@ -168,7 +168,7 @@ if [[ ! -d "$BACKUP_DESTINATION_DIR" ]]; then
         echo "Info: Creating backup destination directory: $BACKUP_DESTINATION_DIR"
     fi
     # Create the backup destination directory and check if it was successful
-    if ! mkdir -p "$BACKUP_DESTINATION_DIR"; then
+    if ! mkdir -p "$BACKUP_DESTINATION_DIR" > /dev/null; then
         echo "Error: Failed to create backup destination directory: $BACKUP_DESTINATION_DIR"
         exit 1
     fi
@@ -177,7 +177,7 @@ elif ! $QUIET; then
 fi
 
 # Check if the provided GitHub user or organization exists
-if ! gh api "/users/$GITHUB_USER_ORG" &> /dev/null && ! gh api "/orgs/$GITHUB_USER_ORG" &> /dev/null; then
+if ! gh api "/users/$GITHUB_USER_ORG" > /dev/null && ! gh api "/orgs/$GITHUB_USER_ORG" > /dev/null; then
     echo "Error: GitHub user or organization '$GITHUB_USER_ORG' does not exist."
     exit 1
 fi
@@ -213,7 +213,7 @@ fi
 if ! $QUIET; then
     echo "Info: Changing directory to backup destination: $BACKUP_DESTINATION_DIR"
 fi
-if ! cd "$BACKUP_DESTINATION_DIR"; then
+if ! cd "$BACKUP_DESTINATION_DIR" > /dev/null; then
     echo "Error: Failed to change directory to backup destination: $BACKUP_DESTINATION_DIR"
     exit 1
 fi
@@ -270,8 +270,7 @@ for current_repo in $REPO_LIST; do
         fi
 
         # Clone the repository and check if it was successful
-#        if ! git clone $GIT_CLONE_ARGS "$REPO_URL" "$REPO_NAME" 2>/dev/null; then
-        if ! git clone $GIT_CLONE_ARGS "$REPO_URL" "$REPO_NAME"; then
+        if ! git clone $GIT_CLONE_ARGS "$REPO_URL" "$REPO_NAME" > /dev/null; then
             echo "Error: Failed to clone repository: $REPO_NAME"
             continue
         elif ! $QUIET; then
@@ -315,7 +314,7 @@ for current_repo in $REPO_LIST; do
     esac
 
     # Change directory to the current repository
-    if ! cd "$REPO_NAME"; then
+    if ! cd "$REPO_NAME" > /dev/null; then
         echo "Error: Failed to change directory to repository: $REPO_NAME"
         exit 1
     elif ! $QUIET; then
@@ -323,7 +322,7 @@ for current_repo in $REPO_LIST; do
     fi
 
     # Pull the latest changes from the remote repository
-    if ! git pull $GIT_PULL_ARGS "$REPO_URL" 2>/dev/null; then
+    if ! git pull $GIT_PULL_ARGS > /dev/null; then
         echo "Error: Failed to pull changes for repository: $REPO_NAME. Please resolve any conflicts manually."
         exit 1
     elif ! $QUIET; then
@@ -331,7 +330,7 @@ for current_repo in $REPO_LIST; do
     fi
 
     # Change directory back to the backup destination directory
-    if ! cd -; then
+    if ! cd - > /dev/null; then
         echo "Error: Failed to change to previous working directory."
         exit 1
     elif ! $QUIET; then
