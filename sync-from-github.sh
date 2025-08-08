@@ -146,11 +146,14 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
-# Check if GitHub CLI (gh) is installed
-if ! command -v gh &> /dev/null; then
-    echo "Error: GitHub CLI (gh) is not installed. Please install and configure it to use this script:
-    https://cli.github.com/manual/"
+# Check if GitHub CLI (gh) is installed and configured
+if ! command -v gh > /dev/null || ! gh auth status > /dev/null; then
+    echo "Error: GitHub CLI (gh) is not installed or the user is not authenticated.
+    Please install it and authenticate yourself using 'gh auth login' before running this script.
+    For more information, visit: https://cli.github.com/manual/"
     exit 1
+elif ! $QUIET; then
+    echo "Info: GitHub CLI (gh) is installed and the user is authenticated."
 fi
 
 # Check if jq is installed
