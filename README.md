@@ -73,7 +73,7 @@ bash ./sync-from-github.sh --backup-destination-dir ~/github-backup --github-use
 
         Note: The exclude pattern takes prevalence over the include pattern.
 
-    -b, --all_branches
+    -a, --all_branches
         Include all branches of the repositories in the sync.
         Default value is false, meaning only the default branch of each repository will be synced.
 

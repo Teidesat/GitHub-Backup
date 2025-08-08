@@ -46,7 +46,7 @@ Options:
 
         Note: The exclude pattern takes prevalence over the include pattern.
 
-    -b, --all_branches
+    -a, --all_branches
         Include all branches of the repositories in the sync.
         Default value is false, meaning only the default branch of each repository will be synced.
 
@@ -113,7 +113,7 @@ while [[ $# -gt 0 ]]; do
             EXCLUDE_REPOSITORIES="$2"
             shift 2
             ;;
-        -b|--all-branches)
+        -a|--all-branches)
             ALL_BRANCHES=true
             shift
             ;;
@@ -256,16 +256,16 @@ for current_repo in $REPO_LIST; do
         fi
         GIT_CLONE_ARGS="$GIT_ARGS"
 
-        # Check if clone all branches
-        if $ALL_BRANCHES; then
-            GIT_CLONE_ARGS="$GIT_CLONE_ARGS --all"
-            if ! $QUIET; then
-                echo "Info: Cloning all branches of the repository from: $REPO_URL"
-            fi
-        else
+        # Check if only the default branch should be cloned
+        if ! $ALL_BRANCHES; then
             GIT_CLONE_ARGS="$GIT_CLONE_ARGS --single-branch"
             if ! $QUIET; then
                 echo "Info: Cloning the default branch '$DEFAULT_BRANCH' of the repository from: $REPO_URL"
+            fi
+        else
+            GIT_CLONE_ARGS="$GIT_CLONE_ARGS --no-single-branch"
+            if ! $QUIET; then
+                echo "Info: Cloning all branches of the repository from: $REPO_URL"
             fi
         fi
 
@@ -283,6 +283,19 @@ for current_repo in $REPO_LIST; do
         echo "Info: Repository already exists at $REPO_NAME, pulling latest changes using mode: $PULL_MODE"
     fi
     GIT_PULL_ARGS="$GIT_ARGS"
+
+    # Check if all branches should be pulled
+    if $ALL_BRANCHES; then
+        GIT_PULL_ARGS="$GIT_PULL_ARGS --all"
+        if ! $QUIET; then
+            echo "Info: Pulling from all branches of the repository: $REPO_NAME"
+        fi
+    else
+        GIT_PULL_ARGS="$GIT_PULL_ARGS --no-all"
+        if ! $QUIET; then
+            echo "Info: Pulling from the default branch '$DEFAULT_BRANCH' of the repository: $REPO_NAME"
+        fi
+    fi
 
     # Parse the pull mode and validate it
     case "$PULL_MODE" in
